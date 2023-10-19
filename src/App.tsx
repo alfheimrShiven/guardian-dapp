@@ -1,7 +1,22 @@
-import { ConnectWallet } from "@thirdweb-dev/react";
+import React, { useState } from "react";
+import {
+  ConnectWallet,
+  Web3Button,
+  useContract,
+  useContractWrite,
+  useAddress,
+} from "@thirdweb-dev/react";
 import "./styles/Home.css";
 
 export default function Home() {
+  const guardianContractAddress = "0x834Edc9015b9Dc77394Cc165eA7d987AE9394CF7";
+  const { contract } = useContract(guardianContractAddress);
+  const walletAddress = useAddress();
+  const { mutateAsync, isLoading, error } = useContractWrite(
+    contract,
+    "addVerifiedGuardian"
+  );
+
   return (
     <main className="main">
       <div className="container">
@@ -14,17 +29,10 @@ export default function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                thirdweb.
+                Thirdweb Guardian dApp.
               </a>
             </span>
           </h1>
-
-          <p className="description">
-            Get started by configuring your desired network in{" "}
-            <code className="code">src/index.js</code>, then modify the{" "}
-            <code className="code">src/App.js</code> file!
-          </p>
-
           <div className="connect">
             <ConnectWallet
               dropdownPosition={{
@@ -33,65 +41,15 @@ export default function Home() {
               }}
             />
           </div>
-        </div>
-
-        <div className="grid">
-          <a
-            href="https://portal.thirdweb.com/"
-            className="card"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Web3Button
+            contractAddress={guardianContractAddress}
+            action={async () => { return mutateAsync({ args: [walletAddress] })}}
+            onSuccess={() => {
+              alert("You've been registered as a Guardian. Thank-you!");
+            }}
           >
-            <img
-              src="/images/portal-preview.png"
-              alt="Placeholder preview of starter"
-            />
-            <div className="card-text">
-              <h2 className="gradient-text-1">Portal ➜</h2>
-              <p>
-                Guides, references, and resources that will help you build with
-                thirdweb.
-              </p>
-            </div>
-          </a>
-
-          <a
-            href="https://thirdweb.com/dashboard"
-            className="card"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img
-              src="/images/dashboard-preview.png"
-              alt="Placeholder preview of starter"
-            />
-            <div className="card-text">
-              <h2 className="gradient-text-2">Dashboard ➜</h2>
-              <p>
-                Deploy, configure, and manage your smart contracts from the
-                dashboard.
-              </p>
-            </div>
-          </a>
-
-          <a
-            href="https://thirdweb.com/templates"
-            className="card"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img
-              src="/images/templates-preview.png"
-              alt="Placeholder preview of templates"
-            />
-            <div className="card-text">
-              <h2 className="gradient-text-3">Templates ➜</h2>
-              <p>
-                Discover and clone template projects showcasing thirdweb
-                features.
-              </p>
-            </div>
-          </a>
+            Add as Guardian
+          </Web3Button>
         </div>
       </div>
     </main>
